@@ -11,19 +11,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
 
-    private static final int NUM_ROWS = 7;
-    private static final int NUM_COLS = 10;
-    private static final int NUM_COOKIES = 10;
 
+
+    private static final int NUM_ROWS = 5;
+    private static final int NUM_COLS = 6;
+    private static final int NUM_COOKIES = 5;
+    private int numClicks = 0;
 
 
     Button buttons [][] = new Button[NUM_ROWS][NUM_COLS];
@@ -80,7 +82,7 @@ public class GameActivity extends AppCompatActivity {
                         1.0f
                 ));
 
-                button.setText(" " +  row + "," + col);
+//                button.setText(" " +  row + "," + col);
 
                 //make text good for small buttons
                 button.setPadding(0, 0, 0 , 0  );
@@ -101,9 +103,9 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void gridButtonClicked(int col, int row) {
-        Toast.makeText(this,
-                "button clicked : "  +  col + "," + row ,
-                Toast.LENGTH_SHORT).show();
+        numClicks++;
+        TextView textView = findViewById(R.id.countClicks);
+        textView.setText("Number of clicks  : " + String.valueOf(numClicks));
 
 //        Log.i("row and col", Integer.toString(row) +" "+ Integer.toString(col));
 //        Log.i("buttons: ", Boolean.toString(buttons != null));
@@ -112,7 +114,6 @@ public class GameActivity extends AppCompatActivity {
         Button button = buttons[row][col];
         //Button button = buttons[col][row];
 
-        isPressed[row][col] = true;
 
         //lock button sizes
         lockButtonSizes();
@@ -127,11 +128,16 @@ public class GameActivity extends AppCompatActivity {
         Bitmap originalBitMap = BitmapFactory.decodeResource(getResources(), R.drawable.image_use);
         Bitmap scaledBitMap = Bitmap.createScaledBitmap(originalBitMap, numWid, numHeight, true);
 
-        Log.i("stuffffffff", Boolean.toString(isCookie[row][col]));
         if(isCookie[row][col] == true){
-            
             button.setBackground(new BitmapDrawable(getResources(), scaledBitMap));
+            if (!isPressed[row][col]){
+                updateCookie(row, col);
+            }
+        } else {
+            button.setText(String.valueOf(nearCookies[row][col]));
         }
+        isPressed[row][col] = true;
+
 //        button.setBackground(new BitmapDrawable(getResources(), scaledBitMap));
 
     }
@@ -192,7 +198,8 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < NUM_ROWS; i++) {
             for (int j = 0; j < NUM_COLS; j++) {
                 if (isCookie[i][j]){
-                    nearCookies[i][j] = 0;
+                    //TODO
+                    nearCookies[i][j] = NUM_COLS*2;
                     continue;
                 }
                 count = 0;
@@ -211,13 +218,33 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void updateCookie(int col,int row){
+    private void updateCookie(int row,int col){
         Button button;
         for (int i = 0; i < NUM_COLS; i++) {
             button = buttons[row][i];
+            //if this button was already pressed AND is not a cookie, then update its visual and -
+            // set it to be -1 of what it was before
+            if (!isCookie[row][i]){
+                if (nearCookies[row][i] > 0){
+                    nearCookies[row][i]--;
+                }
+                if (isPressed[row][i]){
+                    button.setText(String.valueOf(nearCookies[row][i]));
+                }
+            }
         }
         for (int i = 0; i < NUM_ROWS; i++) {
-            
+            button = buttons[i][col];
+            //if this button was already pressed AND is not a cookie, then update its visual and -
+            // set it to be -1 of what it was before
+            if (!isCookie[i][col]){
+                if (nearCookies[i][col] > 0){
+                    nearCookies[i][col]--;
+                }
+                if (isPressed[i][col]){
+                    button.setText(String.valueOf(nearCookies[i][col]));
+                }
+            }
         }
         
     }

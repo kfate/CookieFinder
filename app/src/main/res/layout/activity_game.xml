@@ -6,18 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GameActivity">
+
     <TextView
-        android:id="@+id/hi"
+        android:id="@+id/countClicks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"/>
+        android:text="Number of clicks : 0" />
 
+    android:text="TextView"
     <TableLayout
         android:id="@+id/tableForBottons"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignLeft="@+id/hi"
-        android:layout_below="@+id/hi"
+        android:layout_alignLeft="@+id/countClicks"
+        android:layout_below="@+id/countClicks"
         android:layout_marginTop="0dp"
         android:stretchColumns="*">
     </TableLayout>
